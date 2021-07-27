@@ -1,4 +1,5 @@
 .calva
+.lsp
 target/
 .nrepl-port
 profiles.clj

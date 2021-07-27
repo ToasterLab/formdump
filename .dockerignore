@@ -1,5 +1,6 @@
 /target/classes
 /target/stale
 /.calva
+/.lsp
 .nrepl-port
 README.md

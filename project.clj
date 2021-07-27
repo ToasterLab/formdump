@@ -8,6 +8,7 @@
                  [compojure "1.6.2"]
                  [tick "0.4.32"]
                  [ring/ring-json "0.5.1"]
+                 [ring-cors "0.1.13"]
                  [org.clojure/data.csv "1.0.0"]]
   :plugins [[lein-ring "0.12.5"]]
   :ring {:handler formdump.core/app

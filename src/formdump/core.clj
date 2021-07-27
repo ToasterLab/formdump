@@ -1,7 +1,8 @@
 (ns formdump.core
-  (:require [compojure.core :refer [defroutes GET POST]]
+  (:require [compojure.core :refer [defroutes GET POST OPTIONS]]
             [compojure.route :as route]
             [ring.middleware.json :refer [wrap-json-body wrap-json-response]]
+            [ring.middleware.cors :refer [wrap-cors]]
             [org.httpkit.server :refer [run-server]]
             [org.httpkit.client :as http]
             [org.httpkit.sni-client :as sni-client]
@@ -60,8 +61,8 @@
         field-id (get-in body ["field_id"])
         data (get-in body ["data"])]
     (save-to-csv
-     (concat [url, field-id] (vals data))
-     (concat ["form_url", "field_id"] (keys data)))
+     [url, field-id (to-json data)]
+     ["form_url", "field_id" "data"])
     (if (or (nil? url) (nil? field-id) (nil? data))
       (do
         (println url field-id data)
@@ -72,14 +73,16 @@
         {:body {:status "OK"}}))))
 
 (defroutes app-routes
-  (GET "/" [] "200")
+  (GET "/" [] {:body {:status "OK"}})
   (POST "/" [] handle-form-submission)
   (route/not-found "404 Not Found"))
 
 (def app
   (-> app-routes
       (wrap-json-body)
-      (wrap-json-response)))
+      (wrap-json-response)
+      (wrap-cors :access-control-allow-origin [#".*"]
+                 :access-control-allow-methods [:get :post])))
 
 (defn -main []
   (let [port 8000]
