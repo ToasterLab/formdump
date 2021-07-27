@@ -1,8 +1,6 @@
 (ns formdump.core
   (:require [compojure.core :refer [defroutes GET POST]]
             [compojure.route :as route]
-            [compojure.handler :as handler]
-            [ring.util.response :as response]
             [ring.middleware.json :refer [wrap-json-body wrap-json-response]]
             [org.httpkit.server :refer [run-server]]
             [org.httpkit.client :as http]
@@ -50,10 +48,11 @@
     (if (or (nil? url) (nil? field-id) (nil? data))
       (do
         (println url field-id data)
-        "error")
+        {:status 400
+         :body "Bad request"})
       (do
         (ms-form-proxy url field-id data)
-        "success"))))
+        {:body {:status "OK"}}))))
 
 (defroutes app-routes
   (GET "/" [] "200")
@@ -61,6 +60,11 @@
   (route/not-found "404 Not Found"))
 
 (def app
-  (-> (handler/api app-routes)
+  (-> app-routes
       (wrap-json-body)
       (wrap-json-response)))
+
+(defn -main []
+  (let [port 8000]
+    (println "formdump running on port" port)
+    (run-server app {:port port})))
