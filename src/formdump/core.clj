@@ -1,5 +1,5 @@
 (ns formdump.core
-  (:require [compojure.core :refer [defroutes GET POST OPTIONS]]
+  (:require [compojure.core :refer [defroutes GET POST]]
             [compojure.route :as route]
             [ring.middleware.json :refer [wrap-json-body wrap-json-response]]
             [ring.middleware.cors :refer [wrap-cors]]
@@ -9,10 +9,12 @@
             [jsonista.core :as json]
             [tick.alpha.api :as t]
             [clojure.data.csv :as csv]
-            [clojure.java.io :as io])
+            [clojure.java.io :as io]
+            [environ.core :refer [env]])
   (:gen-class))
 
-(def OUTPUT_FILE "data.csv")
+(def OUTPUT_FILE (env :output-file "data.csv"))
+(def PORT (env :port 8000))
 
 (alter-var-root #'org.httpkit.client/*default-client* (fn [_] sni-client/default-client))
 
@@ -85,6 +87,5 @@
                  :access-control-allow-methods [:get :post])))
 
 (defn -main []
-  (let [port 8000]
-    (println "formdump running on port" port)
-    (run-server app {:port port})))
+  (println "formdump running on port" PORT)
+  (run-server app {:port PORT}))
