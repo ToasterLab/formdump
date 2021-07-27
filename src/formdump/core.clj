@@ -6,8 +6,12 @@
             [org.httpkit.client :as http]
             [org.httpkit.sni-client :as sni-client]
             [jsonista.core :as json]
-            [tick.alpha.api :as t])
+            [tick.alpha.api :as t]
+            [clojure.data.csv :as csv]
+            [clojure.java.io :as io])
   (:gen-class))
+
+(def OUTPUT_FILE "data.csv")
 
 (alter-var-root #'org.httpkit.client/*default-client* (fn [_] sni-client/default-client))
 
@@ -17,6 +21,16 @@
 (defn iso-date-string []
   (let [date (t/format :iso-instant (t/zoned-date-time))]
     (str (subs date 0 23) (subs date 26 27))))
+
+(defn save-to-csv
+  "takes an vector and writes it to a CSV file"
+  [data headers]
+  (if (.exists (io/file OUTPUT_FILE))
+    (with-open [writer (io/writer OUTPUT_FILE :append true)]
+      (csv/write-csv writer [data]))
+    (with-open [writer (io/writer OUTPUT_FILE)]
+      (csv/write-csv writer [headers])
+      (csv/write-csv writer [data]))))
 
 (defn build-answers [field-id data]
   (to-json [{:questionId field-id
@@ -45,6 +59,9 @@
         url (get-in body ["url"])
         field-id (get-in body ["field_id"])
         data (get-in body ["data"])]
+    (save-to-csv
+     (concat [url, field-id] (vals data))
+     (concat ["form_url", "field_id"] (keys data)))
     (if (or (nil? url) (nil? field-id) (nil? data))
       (do
         (println url field-id data)

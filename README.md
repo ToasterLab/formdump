@@ -1,13 +1,18 @@
 # formdump
 
 dumps form field input into a CSV and optionally to a Microsoft Forms spreadsheet
+
 ## Development
+
+You need [Leiningen](https://leiningen.org/) and Java/OpenJDK installed.
 
 ```bash
 lein ring server
 ```
 
 ## Deployment
+
+Note that data is written to `./data.csv`.
 
 ### Docker
 

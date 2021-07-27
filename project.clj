@@ -7,7 +7,8 @@
                  [metosin/jsonista "0.3.3"]
                  [compojure "1.6.2"]
                  [tick "0.4.32"]
-                 [ring/ring-json "0.5.1"]]
+                 [ring/ring-json "0.5.1"]
+                 [org.clojure/data.csv "1.0.0"]]
   :plugins [[lein-ring "0.12.5"]]
   :ring {:handler formdump.core/app
          :nrepl {:start true
