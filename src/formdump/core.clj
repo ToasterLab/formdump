@@ -7,10 +7,11 @@
             [org.httpkit.client :as http]
             [org.httpkit.sni-client :as sni-client]
             [jsonista.core :as json]
-            [tick.alpha.api :as t]
             [clojure.data.csv :as csv]
             [clojure.java.io :as io]
             [environ.core :refer [env]])
+  (:import [java.time ZonedDateTime]
+           [java.time.format DateTimeFormatterBuilder])
   (:gen-class))
 
 (def OUTPUT_FILE (env :output-file "data.csv"))
@@ -22,8 +23,10 @@
   (json/write-value-as-string data))
 
 (defn iso-date-string []
-  (let [date (t/format :iso-instant (t/zoned-date-time))]
-    (str (subs date 0 23) (subs date 26 27))))
+  (-> (new DateTimeFormatterBuilder)
+      (.appendInstant 3)
+      (.toFormatter)
+      (.format (ZonedDateTime/now))))
 
 (defn save-to-csv
   "takes an vector and writes it to a CSV file"
@@ -48,7 +51,9 @@
 
 (defn ms-form-proxy [form-url field-id data]
   (let [payload (build-ms-form-payload field-id data)
-        {:keys [status body error]} @(http/post form-url {:body (to-json payload)                                                  :headers {"Content-Type" "application/json"}})]
+        {:keys [status body error]} @(http/post form-url {:body (to-json payload)
+                                                          :headers {"Content-Type" "application/json"}})]
+    (println "payload" payload)
     (if error
       (do
         (println "Failed" error body)

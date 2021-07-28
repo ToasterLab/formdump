@@ -24,6 +24,8 @@ There is an image on Docker Hub labelled [`hueyy/formdump`](https://hub.docker.c
 docker run -p 8000:8000 hueyy/formdump
 ```
 
+You can set the timezone in the container with the `TZ` environment variable, e.g. `TZ=Europe/London`.
+
 #### Build from source
 
 ```bash
