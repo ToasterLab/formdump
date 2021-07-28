@@ -3,5 +3,5 @@
 target/
 .nrepl-port
 profiles.clj
-.lein-repl.history
+.lein-repl-history
 data.csv

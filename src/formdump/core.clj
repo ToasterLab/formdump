@@ -14,7 +14,7 @@
   (:gen-class))
 
 (def OUTPUT_FILE (env :output-file "data.csv"))
-(def PORT (env :port 8000))
+(def PORT (Integer. (env :port 8000)))
 
 (alter-var-root #'org.httpkit.client/*default-client* (fn [_] sni-client/default-client))
 

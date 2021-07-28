@@ -3,4 +3,5 @@
 /.calva
 /.lsp
 .nrepl-port
+.lein-repl-history
 README.md

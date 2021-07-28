@@ -1,7 +1,7 @@
 FROM clojure:openjdk-17-lein-2.9.6-alpine AS build
 WORKDIR /app
 ADD . /app
-CMD ["lein", "uberjar"]
+RUN lein uberjar
 
 FROM openjdk:17-jdk-alpine3.14
 WORKDIR /app
